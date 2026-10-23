@@ -1,18 +1,18 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="すくぷーんタイム">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="スクぷーんタイム">
 <link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="icon" href="icon-192.png"><link rel="manifest" href="manifest.json">
 <meta http-equiv="Cache-Control" content="no-cache">
 <script>
 /* ホーム画面アプリでも新しい版に自動で切り替える */
-(function(){var BUILD="1792762908";function check(){try{fetch("./index.html?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/var BUILD="(\d+)"/);if(m&&m[1]!==BUILD){location.replace("./?v="+m[1])}}).catch(function(){})}catch(e){}}
+(function(){var BUILD="1792762958";function check(){try{fetch("./index.html?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/var BUILD="(\d+)"/);if(m&&m[1]!==BUILD){location.replace("./?v="+m[1])}}).catch(function(){})}catch(e){}}
 window.addEventListener("load",check);document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")check()});})();
 </script>
-<title>すくぷーんタイム｜iPhoneのアプリ使用時間を分単位で確認（スクリーンタイムより細かく）</title>
+<title>スクぷーんタイム｜iPhoneのアプリ使用時間を分単位で確認（スクリーンタイムより細かく）</title>
 <meta name="description" content="iPhoneのスクリーンタイムでは1時間単位までしか見られない「何時何分に何のアプリを使っていたか」を、分単位のタイムラインで確認できる無料ツール。登録不要、データは端末内だけで処理します。">
 <link rel="canonical" href="https://pipopa-lab.github.io/screenlog/">
 <meta property="og:type" content="website"><meta property="og:url" content="https://pipopa-lab.github.io/screenlog/">
-<meta property="og:title" content="すくぷーんタイム｜iPhoneのアプリ使用時間を分単位で確認">
+<meta property="og:title" content="スクぷーんタイム｜iPhoneのアプリ使用時間を分単位で確認">
 <meta property="og:description" content="iPhoneのスクリーンタイムでは1時間単位までしか見られない「何時何分に何のアプリを使っていたか」を、分単位のタイムラインで確認できる無料ツール。登録不要、データは端末内だけで処理します。">
 <meta property="og:image" content="https://pipopa-lab.github.io/screenlog/og.png"><meta name="twitter:card" content="summary_large_image">
 
@@ -149,7 +149,7 @@ header p{margin:0;color:var(--sub);font-size:13px;line-height:1.6}
 <div class="field" aria-hidden="true"><i></i><i></i><i></i></div>
 <div class="wrap">
   <header>
-    <h1>すくぷーんタイム</h1>
+    <h1>スクぷーんタイム</h1>
     <p>iPhoneの診断ファイルから、何時何分にどのアプリを使っていたかを分刻みで表示します。ファイルはこの端末のブラウザの中だけで読み込み、どこにも送信しません。</p>
   </header>
   <div class="banner glass" id="banner"><b>サンプル表示中</b><span>下の「フォルダを選ぶ」から自分の記録を選ぶと切り替わります。</span></div>
