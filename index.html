@@ -5,7 +5,7 @@
 <meta http-equiv="Cache-Control" content="no-cache">
 <script>
 /* ホーム画面アプリでも新しい版に自動で切り替える */
-(function(){var BUILD="1792758380";function check(){try{fetch("./index.html?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/var BUILD="(\d+)"/);if(m&&m[1]!==BUILD){location.replace("./?v="+m[1])}}).catch(function(){})}catch(e){}}
+(function(){var BUILD="1792758718";function check(){try{fetch("./index.html?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/var BUILD="(\d+)"/);if(m&&m[1]!==BUILD){location.replace("./?v="+m[1])}}).catch(function(){})}catch(e){}}
 window.addEventListener("load",check);document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")check()});})();
 </script>
 <title>スクリーンログ｜iPhoneのアプリ使用時間を分単位で確認（スクリーンタイムより細かく）</title>
@@ -104,6 +104,8 @@ header p{margin:0;color:var(--sub);font-size:13px;line-height:1.6}
 .err{color:#ff453a;font-size:13px;line-height:1.6}
 .sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.28);z-index:20;display:flex;align-items:flex-end;justify-content:center}
 .sheet{background:color-mix(in srgb,var(--bg) 82%,transparent)!important;width:100%;max-width:720px;max-height:78vh;overflow:auto;border-radius:30px 30px 0 0;padding:10px max(18px,env(safe-area-inset-right,0px)) calc(22px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px))}
+.sheet-top{position:sticky;top:-10px;margin:-10px calc(-1 * max(18px,env(safe-area-inset-right,0px))) 0;padding:10px max(18px,env(safe-area-inset-right,0px)) 10px;background:color-mix(in srgb,var(--bg) 96%,transparent);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);cursor:grab;touch-action:none;z-index:1;border-radius:30px 30px 0 0;-webkit-user-select:none;user-select:none}
+.sheet-top:focus-visible{outline:2px solid var(--accent);outline-offset:-4px}
 .sheet .grab{width:38px;height:5px;border-radius:3px;background:var(--tick);margin:0 auto 12px}
 .sheet h2{font-size:20px;margin:0 0 4px}
 .sheet .bigbar{height:40px;margin:14px 0 6px}
@@ -365,12 +367,23 @@ document.getElementById("idleBtn").onclick=function(){const P=document.getElemen
 document.querySelectorAll("[data-fold]").forEach(btn=>btn.addEventListener("click",()=>{const P=document.getElementById(btn.dataset.fold);const open=btn.getAttribute("aria-expanded")!=="true";btn.setAttribute("aria-expanded",String(open));P.hidden=!open;if(open){P.classList.remove("pop");void P.offsetWidth;P.classList.add("pop")}}));
 function hourSheet(a,k){const ha=a+k*3600,hb=ha+3600;const rr=cut(DATA.recs,ha,hb).filter(r=>r.a!=="ロック画面");const used=rr.reduce((x,r)=>x+r.e-r.s,0);
   const host=document.getElementById("sheetHost");
-  host.innerHTML=`<div class="sheet-bg" id="sbg"><div class="sheet glass" role="dialog" aria-modal="true" aria-label="${k}時台の詳細"><div class="grab"></div><h2>${k}時台</h2><div class="k">画面の使用 ${dur(used)}・${rr.length}回の切り替え</div>
+  host.innerHTML=`<div class="sheet-bg" id="sbg"><div class="sheet glass" role="dialog" aria-modal="true" aria-label="${k}時台の詳細"><div class="sheet-top" id="sTop" role="button" tabindex="0" aria-label="閉じる（タップか下にスライド）"><div class="grab"></div><h2>${k}時台</h2><div class="k">画面の使用 ${dur(used)}・${rr.length}回の切り替え</div></div>
   <div class="bar bigbar"><i class="g" style="left:25%"></i><i class="g" style="left:50%"></i><i class="g" style="left:75%"></i>${rr.map(r=>`<i class="b" style="left:${(r.s-ha)/36}%;width:${(r.e-r.s)/36}%;background:${color(r.a)}"></i>`).join("")}</div>
   <div class="ruler" style="position:static;grid-template-columns:1fr;margin-bottom:10px"><div class="sc"><span style="left:0;transform:none">${k}:00</span><span style="left:25%">:15</span><span style="left:50%">:30</span><span style="left:75%">:45</span><span style="left:100%;transform:translateX(-100%)">${k+1}:00</span></div></div>
   ${rr.filter(r=>!(SYS.has(r.a)&&r.e-r.s<5)).map(r=>`<div class="row" style="--c:${color(r.a)}"><i class="dot"></i><span class="nm">${esc(r.a)}<small>${hms(r.s)} 〜 ${hms(r.e)}</small></span><span class="tm">${dur(r.e-r.s)}</span></div>`).join("")}
   <div style="display:flex;justify-content:center;margin-top:14px"><button class="btn ghost" type="button" id="closeS">閉じる</button></div></div></div>`;
-  const close=()=>{host.innerHTML=""};document.getElementById("closeS").onclick=close;document.getElementById("sbg").onclick=e=>{if(e.target.id==="sbg")close()};document.getElementById("closeS").focus();
+  const bg=document.getElementById("sbg"),sh=bg.querySelector(".sheet"),top=document.getElementById("sTop");let closing=false;
+  const close=()=>{if(closing)return;closing=true;document.removeEventListener("keydown",onKey);sh.style.transition="transform .22s ease-in";bg.style.transition="opacity .22s";sh.style.transform="translateY(100%)";bg.style.opacity="0";setTimeout(()=>{host.innerHTML=""},230)};
+  const onKey=e=>{if(e.key==="Escape")close()};document.addEventListener("keydown",onKey);
+  document.getElementById("closeS").onclick=close;bg.onclick=e=>{if(e.target===bg)close()};
+  top.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();close()}};
+  let y0=null,t0=0,dy=0;
+  top.addEventListener("pointerdown",e=>{y0=e.clientY;t0=performance.now();dy=0;sh.style.animation="none";sh.style.transition="none";try{top.setPointerCapture(e.pointerId)}catch(_){}});
+  top.addEventListener("pointermove",e=>{if(y0===null)return;dy=Math.max(0,e.clientY-y0);sh.style.transform=`translateY(${dy}px)`;bg.style.opacity=String(Math.max(.3,1-dy/400))});
+  const end=()=>{if(y0===null)return;const v=dy/Math.max(1,performance.now()-t0);y0=null;
+    if(dy<6||dy>90||v>.6){close()}else{sh.style.transition="transform .25s cubic-bezier(.34,1.56,.64,1)";sh.style.transform="";bg.style.opacity=""}};
+  top.addEventListener("pointerup",end);top.addEventListener("pointercancel",()=>{y0=null;sh.style.transition="transform .2s";sh.style.transform="";bg.style.opacity=""});
+  top.focus({preventScroll:true});sh.scrollTop=0;
 }
 function renderClear(){const box=document.getElementById("clearBox");const st=load();if(!st){box.innerHTML="";return}
   box.innerHTML=`<span>このブラウザに保存中の記録：${new Date(st.start*1000).getMonth()+1}/${new Date(st.start*1000).getDate()}〜</span><button class="link" type="button" id="clr">保存した記録を消す</button>`;
