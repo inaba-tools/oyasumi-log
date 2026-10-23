@@ -129,10 +129,6 @@ header p{margin:0;color:var(--sub);font-size:13px;line-height:1.6}
     <h2 class="sec-t">アプリ別</h2>
     <div class="apps" id="apps"></div>
   </section>
-  <section class="glass pad">
-    <h2 class="sec-t">画面をつけていた回<span>新しい順</span></h2>
-    <div class="sess" id="sess"></div>
-  </section>
   <section class="glass pad how">
     <h2 class="sec-t">自分の記録を見る方法</h2>
     <ol>
@@ -305,8 +301,6 @@ function show(i){CUR=i;const a=DAYS[i],b=a+86400;
   const per={};R.forEach(r=>per[r.a]=(per[r.a]||0)+r.e-r.s);const L=Object.entries(per).sort((x,y)=>y[1]-x[1]);const apps=L.filter(x=>!SYS.has(x[0]));const mx=apps.length?apps[0][1]:1;
   document.getElementById("legend").innerHTML=apps.slice(0,8).map(([n])=>`<span style="--c:${color(n)}"><i></i>${esc(n)}</span>`).join("")+(L.some(x=>SYS.has(x[0]))?`<span style="--c:var(--faint)"><i></i>ホーム画面など</span>`:"");
   document.getElementById("apps").innerHTML=apps.length?apps.filter(x=>x[1]>=20).map(([n,v])=>`<div class="app" style="--c:${color(n)}"><span class="n">${esc(n)}</span><span class="l"><i style="width:${Math.max(v/mx*100,1.5)}%"></i></span><span class="d">${dur(v)}</span></div>`).join(""):'<div class="k">この日の記録はありません</div>';
-  document.getElementById("sess").innerHTML=S.slice().reverse().map(s=>{const rr=cut(R,s.s,s.e);const p={};rr.forEach(r=>{if(!SYS.has(r.a))p[r.a]=(p[r.a]||0)+r.e-r.s});const t=Object.entries(p).sort((x,y)=>y[1]-x[1]).map(([n,v])=>esc(n)+" "+dur(v)).join("・")||"ホーム画面など";
-    return`<div class="se"><span class="tm">${hm(s.s)} 〜 ${hm(s.e)}</span><span class="du">${dur(s.e-s.s)}</span><span class="ap">${t}</span></div>`}).join("")||'<div class="k">この日の記録はありません</div>';
 }
 function hourSheet(a,k){const ha=a+k*3600,hb=ha+3600;const rr=cut(DATA.recs,ha,hb).filter(r=>r.a!=="ロック画面");const used=rr.reduce((x,r)=>x+r.e-r.s,0);
   const host=document.getElementById("sheetHost");
