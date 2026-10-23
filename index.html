@@ -1,6 +1,12 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="スクリーンログ">
+<meta http-equiv="Cache-Control" content="no-cache">
+<script>
+/* ホーム画面アプリでも新しい版に自動で切り替える */
+(function(){var BUILD="1792758085";function check(){try{fetch("./index.html?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/var BUILD="(\d+)"/);if(m&&m[1]!==BUILD){location.replace("./?v="+m[1])}}).catch(function(){})}catch(e){}}
+window.addEventListener("load",check);document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")check()});})();
+</script>
 <title>スクリーンログ｜iPhoneのアプリ使用時間を分単位で確認（スクリーンタイムより細かく）</title>
 <meta name="description" content="iPhoneのスクリーンタイムでは1時間単位までしか見られない「何時何分に何のアプリを使っていたか」を、分単位のタイムラインで確認できる無料ツール。登録不要、データは端末内だけで処理します。">
 <link rel="canonical" href="https://pipopa-lab.github.io/screenlog/">
