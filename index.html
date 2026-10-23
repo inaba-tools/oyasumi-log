@@ -1,10 +1,11 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="スクリーンログ">
+<link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="icon" href="icon-192.png"><link rel="manifest" href="manifest.json">
 <meta http-equiv="Cache-Control" content="no-cache">
 <script>
 /* ホーム画面アプリでも新しい版に自動で切り替える */
-(function(){var BUILD="1792758085";function check(){try{fetch("./index.html?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/var BUILD="(\d+)"/);if(m&&m[1]!==BUILD){location.replace("./?v="+m[1])}}).catch(function(){})}catch(e){}}
+(function(){var BUILD="1792758380";function check(){try{fetch("./index.html?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/var BUILD="(\d+)"/);if(m&&m[1]!==BUILD){location.replace("./?v="+m[1])}}).catch(function(){})}catch(e){}}
 window.addEventListener("load",check);document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")check()});})();
 </script>
 <title>スクリーンログ｜iPhoneのアプリ使用時間を分単位で確認（スクリーンタイムより細かく）</title>
@@ -130,6 +131,14 @@ header p{margin:0;color:var(--sub);font-size:13px;line-height:1.6}
  @keyframes pop{from{transform:scale(.92) translateY(-6px);opacity:0}}
  @keyframes popi{from{transform:scale(.8) translateY(-4px);opacity:0}}
 }
+.fold-h{margin:0;font:inherit}
+.fold-btn{margin-top:0}
+.fold{margin-top:14px;transform-origin:top center}
+.fold-note{margin:0 0 10px;font-size:12px;color:var(--sub)}
+@media (prefers-reduced-motion:no-preference){
+ .fold.pop{animation:pop .42s cubic-bezier(.34,1.56,.64,1)}
+ .fold.pop .hour,.fold.pop .app{animation:popi .42s cubic-bezier(.34,1.56,.64,1) both;animation-delay:calc(var(--n,0)*22ms)}
+}
 .confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px}
 .link{background:none;border:0;color:var(--accent);font:inherit;cursor:pointer;padding:0}
 @media (prefers-reduced-motion:no-preference){.sheet{animation:up .28s cubic-bezier(.2,.9,.3,1)}@keyframes up{from{transform:translateY(40px);opacity:.4}}}
@@ -154,14 +163,19 @@ header p{margin:0;color:var(--sub);font-size:13px;line-height:1.6}
     <div class="idle" id="idlePanel" hidden></div>
   </section>
   <section class="glass pad">
-    <h2 class="sec-t">1分ごとのタイムライン<span>時間をタップで秒単位の詳細</span></h2>
+    <h2 class="fold-h"><button type="button" class="idle-btn fold-btn" data-fold="foldTl" aria-expanded="false" aria-controls="foldTl"><span>1分ごとのタイムライン</span><b id="tlSum"></b><i class="chev" aria-hidden="true"></i></button></h2>
+    <div class="fold" id="foldTl" hidden>
+    <p class="fold-note">時間をタップすると秒単位の詳細が出ます</p>
     <div class="ruler"><span></span><div class="sc"><span style="left:0">00</span><span style="left:25%">15</span><span style="left:50%">30</span><span style="left:75%">45</span><span style="left:100%">60</span></div><span></span></div>
     <div id="hours"></div>
     <div class="legend" id="legend"></div>
+    </div>
   </section>
   <section class="glass pad">
-    <h2 class="sec-t">アプリ別</h2>
+    <h2 class="fold-h"><button type="button" class="idle-btn fold-btn" data-fold="foldApps" aria-expanded="false" aria-controls="foldApps"><span>アプリ別</span><b id="appsSum"></b><i class="chev" aria-hidden="true"></i></button></h2>
+    <div class="fold" id="foldApps" hidden>
     <div class="apps" id="apps"></div>
+    </div>
   </section>
   <section class="glass pad how">
     <h2 class="sec-t">自分の記録を見る方法</h2>
@@ -171,11 +185,11 @@ header p{margin:0;color:var(--sub);font-size:13px;line-height:1.6}
       <li>「設定」→「プライバシーとセキュリティ」→「解析と改善」→「解析データ」で <b>sysdiagnose_</b> で始まるファイルを開き、共有ボタンから「ファイルに保存」。名前が <b>IN_PROGRESS_</b> で始まるものはまだ作成中なので、消えるまで待ってください</li>
       <li>このページの<b>「フォルダを選ぶ」</b>で、保存された <b>sysdiagnose_</b> のフォルダを選ぶ</li>
     </ol>
-    <div class="note">さかのぼれるのは直近1日半ほどです。読み込んだ記録はこのブラウザに残るので、こまめに読み込むと日をまたいで溜まっていきます。フォルダが選べない場合は、フォルダを長押しして「圧縮」したzipを「ファイル」から選んでも読めます。.tar.gz や、中の powerlog_〜.PLSQL を直接選ぶこともできます。</div>
+    <div class="note">さかのぼれるのは直近1日半ほどです。読み込んだ記録はこのブラウザに残るので、こまめに読み込むと日をまたいで溜まっていきます。フォルダが選べない場合は、フォルダを長押しして「圧縮」したzipを<button class="link" type="button" id="pick">ファイルから選ぶ</button>こともできます。</div>
     <div class="note confirm" id="clearBox"></div>
   </section>
 </div>
-<div class="dock"><div class="glass"><button class="btn" id="pickDir" type="button">フォルダを選ぶ</button><button class="btn ghost" id="pick" type="button">ファイル</button></div></div>
+<div class="dock"><div class="glass"><button class="btn" id="pickDir" type="button">フォルダを選ぶ</button></div></div>
 <input type="file" id="file" hidden>
 <input type="file" id="dir" webkitdirectory multiple hidden>
 <div id="sheetHost"></div>
@@ -329,13 +343,15 @@ function show(i){CUR=i;const a=DAYS[i],b=a+86400;
   document.getElementById("sTot").innerHTML=tot?dur(tot,true):"0<small>分</small>";
   document.getElementById("sCnt").innerHTML=S.length+"<small>回</small>";
   renderIdle(R,a,b);
+  {const used=new Set(R.map(r=>new Date(r.s*1000).getHours()));document.getElementById("tlSum").textContent=R.length?used.size+"時間帯で使用":"記録なし"}
   const lastE=R.length?R[R.length-1].e:0;document.getElementById("sSpan").textContent=R.length?hm(R[0].s)+"〜"+(lastE>=b?"24:00":hm(lastE)):"—";
   let h="";for(let k=0;k<24;k++){const ha=a+k*3600,hb=ha+3600;const rr=cut(R,ha,hb);const used=rr.reduce((x,r)=>x+r.e-r.s,0);
-    h+=`<button type="button" class="hour${used?"":" empty"}" data-h="${k}" aria-label="${k}時台 ${used?dur(used):"使用なし"}"><span class="h">${k}時</span><div class="bar">${used?'<i class="g" style="left:25%"></i><i class="g" style="left:50%"></i><i class="g" style="left:75%"></i>':""}${rr.map(r=>`<i class="b" style="left:${(r.s-ha)/36}%;width:${(r.e-r.s)/36}%;background:${color(r.a)}"></i>`).join("")}</div><span class="t">${used?dur(used):""}</span></button>`}
+    h+=`<button type="button" class="hour${used?"":" empty"}" style="--n:${k}" data-h="${k}" aria-label="${k}時台 ${used?dur(used):"使用なし"}"><span class="h">${k}時</span><div class="bar">${used?'<i class="g" style="left:25%"></i><i class="g" style="left:50%"></i><i class="g" style="left:75%"></i>':""}${rr.map(r=>`<i class="b" style="left:${(r.s-ha)/36}%;width:${(r.e-r.s)/36}%;background:${color(r.a)}"></i>`).join("")}</div><span class="t">${used?dur(used):""}</span></button>`}
   const H=document.getElementById("hours");H.innerHTML=h;H.onclick=e=>{const b=e.target.closest(".hour");if(b&&!b.classList.contains("empty"))hourSheet(a,+b.dataset.h)};
   const per={};R.forEach(r=>per[r.a]=(per[r.a]||0)+r.e-r.s);const L=Object.entries(per).sort((x,y)=>y[1]-x[1]);const apps=L.filter(x=>!SYS.has(x[0]));const mx=apps.length?apps[0][1]:1;
   document.getElementById("legend").innerHTML=apps.slice(0,8).map(([n])=>`<span style="--c:${color(n)}"><i></i>${esc(n)}</span>`).join("")+(L.some(x=>SYS.has(x[0]))?`<span style="--c:var(--faint)"><i></i>ホーム画面など</span>`:"");
-  document.getElementById("apps").innerHTML=apps.length?apps.filter(x=>x[1]>=20).map(([n,v])=>`<div class="app" style="--c:${color(n)}"><span class="n">${esc(n)}</span><span class="l"><i style="width:${Math.max(v/mx*100,1.5)}%"></i></span><span class="d">${dur(v)}</span></div>`).join(""):'<div class="k">この日の記録はありません</div>';
+  document.getElementById("appsSum").textContent=apps.length?apps[0][0]+" "+dur(apps[0][1])+" ほか":"記録なし";
+  document.getElementById("apps").innerHTML=apps.length?apps.filter(x=>x[1]>=20).map(([n,v],i)=>`<div class="app" style="--c:${color(n)};--n:${i}"><span class="n">${esc(n)}</span><span class="l"><i style="width:${Math.max(v/mx*100,1.5)}%"></i></span><span class="d">${dur(v)}</span></div>`).join(""):'<div class="k">この日の記録はありません</div>';
 }
 function renderIdle(R,a,b){const lo=Math.max(a,DATA.start),hi=Math.min(b,DATA.end);const G=[];let t=lo;
   for(const r of R){if(r.s-t>=1800)G.push([t,r.s]);t=Math.max(t,r.e)}if(hi-t>=1800)G.push([t,hi]);
@@ -346,6 +362,7 @@ function renderIdle(R,a,b){const lo=Math.max(a,DATA.start),hi=Math.min(b,DATA.en
   P.innerHTML=G.length?G.map((g,i)=>`<div class="ir${i===mi?" top":""}" style="--n:${i}"><span class="tm">${tl(g[0])} 〜 ${tl(g[1])}</span><span class="tag">${i===mi?"一番長い":""}</span><span class="du">${dur(g[1]-g[0])}</span></div>`).join(""):'<div class="none">この日は30分以上あいた時間がありません</div>';
 }
 document.getElementById("idleBtn").onclick=function(){const P=document.getElementById("idlePanel");const open=this.getAttribute("aria-expanded")!=="true";this.setAttribute("aria-expanded",String(open));P.hidden=!open;if(open){P.classList.remove("pop");void P.offsetWidth;P.classList.add("pop")}};
+document.querySelectorAll("[data-fold]").forEach(btn=>btn.addEventListener("click",()=>{const P=document.getElementById(btn.dataset.fold);const open=btn.getAttribute("aria-expanded")!=="true";btn.setAttribute("aria-expanded",String(open));P.hidden=!open;if(open){P.classList.remove("pop");void P.offsetWidth;P.classList.add("pop")}}));
 function hourSheet(a,k){const ha=a+k*3600,hb=ha+3600;const rr=cut(DATA.recs,ha,hb).filter(r=>r.a!=="ロック画面");const used=rr.reduce((x,r)=>x+r.e-r.s,0);
   const host=document.getElementById("sheetHost");
   host.innerHTML=`<div class="sheet-bg" id="sbg"><div class="sheet glass" role="dialog" aria-modal="true" aria-label="${k}時台の詳細"><div class="grab"></div><h2>${k}時台</h2><div class="k">画面の使用 ${dur(used)}・${rr.length}回の切り替え</div>
