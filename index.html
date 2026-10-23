@@ -105,6 +105,25 @@ header p{margin:0;color:var(--sub);font-size:13px;line-height:1.6}
 .row .tm{font-variant-numeric:tabular-nums;color:var(--sub);font-size:13px}
 .row .nm{min-width:0}
 .row .nm small{display:block;color:var(--sub);font-size:12px;font-variant-numeric:tabular-nums}
+.idle-btn{margin-top:14px;width:100%;display:flex;align-items:center;gap:8px;border:1px solid var(--glass-edge);background:var(--track);color:var(--fg);font:600 14px var(--font);padding:11px 14px;border-radius:999px;cursor:pointer;text-align:left}
+.idle-btn span{flex:1;min-width:0}
+.idle-btn b{font-weight:600;color:var(--sub);font-variant-numeric:tabular-nums;font-size:13px}
+.idle-btn .chev{width:8px;height:8px;border-right:2px solid var(--sub);border-bottom:2px solid var(--sub);transform:rotate(45deg);transition:transform .25s;margin:0 4px 3px}
+.idle-btn[aria-expanded="true"] .chev{transform:rotate(-135deg);margin-bottom:-3px}
+.idle-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.idle{margin-top:10px;display:flex;flex-direction:column;gap:6px;transform-origin:top center}
+.idle .ir{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px 14px;border-radius:16px;background:var(--track);font-size:14px;font-variant-numeric:tabular-nums}
+.idle .ir .tm{font-weight:650}
+.idle .ir .du{color:var(--sub);font-size:13px;text-align:right}
+.idle .ir.top{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.idle .ir .tag{font-size:11px;font-weight:600;color:var(--accent)}
+.idle .none{font-size:13px;color:var(--sub);padding:4px 2px}
+@media (prefers-reduced-motion:no-preference){
+ .idle.pop{animation:pop .42s cubic-bezier(.34,1.56,.64,1)}
+ .idle.pop .ir{animation:popi .42s cubic-bezier(.34,1.56,.64,1) both;animation-delay:calc(var(--n)*45ms)}
+ @keyframes pop{from{transform:scale(.92) translateY(-6px);opacity:0}}
+ @keyframes popi{from{transform:scale(.8) translateY(-4px);opacity:0}}
+}
 .confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px}
 .link{background:none;border:0;color:var(--accent);font:inherit;cursor:pointer;padding:0}
 @media (prefers-reduced-motion:no-preference){.sheet{animation:up .28s cubic-bezier(.2,.9,.3,1)}@keyframes up{from{transform:translateY(40px);opacity:.4}}}
@@ -125,6 +144,8 @@ header p{margin:0;color:var(--sub);font-size:13px;line-height:1.6}
       <div><span class="k">画面をつけた回数</span><span class="v" id="sCnt"></span></div>
       <div><span class="k">最初〜最後</span><span class="v" id="sSpan" style="font-size:19px;padding-top:5px"></span></div>
     </div>
+    <button type="button" class="idle-btn" id="idleBtn" aria-expanded="false" aria-controls="idlePanel"><span>30分以上 操作なし</span><b id="idleSum"></b><i class="chev" aria-hidden="true"></i></button>
+    <div class="idle" id="idlePanel" hidden></div>
   </section>
   <section class="glass pad">
     <h2 class="sec-t">1分ごとのタイムライン<span>時間をタップで秒単位の詳細</span></h2>
@@ -301,6 +322,7 @@ function show(i){CUR=i;const a=DAYS[i],b=a+86400;
   const tot=R.reduce((x,r)=>x+r.e-r.s,0);
   document.getElementById("sTot").innerHTML=tot?dur(tot,true):"0<small>分</small>";
   document.getElementById("sCnt").innerHTML=S.length+"<small>回</small>";
+  renderIdle(R,a,b);
   const lastE=R.length?R[R.length-1].e:0;document.getElementById("sSpan").textContent=R.length?hm(R[0].s)+"〜"+(lastE>=b?"24:00":hm(lastE)):"—";
   let h="";for(let k=0;k<24;k++){const ha=a+k*3600,hb=ha+3600;const rr=cut(R,ha,hb);const used=rr.reduce((x,r)=>x+r.e-r.s,0);
     h+=`<button type="button" class="hour${used?"":" empty"}" data-h="${k}" aria-label="${k}時台 ${used?dur(used):"使用なし"}"><span class="h">${k}時</span><div class="bar">${used?'<i class="g" style="left:25%"></i><i class="g" style="left:50%"></i><i class="g" style="left:75%"></i>':""}${rr.map(r=>`<i class="b" style="left:${(r.s-ha)/36}%;width:${(r.e-r.s)/36}%;background:${color(r.a)}"></i>`).join("")}</div><span class="t">${used?dur(used):""}</span></button>`}
@@ -309,6 +331,15 @@ function show(i){CUR=i;const a=DAYS[i],b=a+86400;
   document.getElementById("legend").innerHTML=apps.slice(0,8).map(([n])=>`<span style="--c:${color(n)}"><i></i>${esc(n)}</span>`).join("")+(L.some(x=>SYS.has(x[0]))?`<span style="--c:var(--faint)"><i></i>ホーム画面など</span>`:"");
   document.getElementById("apps").innerHTML=apps.length?apps.filter(x=>x[1]>=20).map(([n,v])=>`<div class="app" style="--c:${color(n)}"><span class="n">${esc(n)}</span><span class="l"><i style="width:${Math.max(v/mx*100,1.5)}%"></i></span><span class="d">${dur(v)}</span></div>`).join(""):'<div class="k">この日の記録はありません</div>';
 }
+function renderIdle(R,a,b){const lo=Math.max(a,DATA.start),hi=Math.min(b,DATA.end);const G=[];let t=lo;
+  for(const r of R){if(r.s-t>=1800)G.push([t,r.s]);t=Math.max(t,r.e)}if(hi-t>=1800)G.push([t,hi]);
+  const tot=G.reduce((x,g)=>x+g[1]-g[0],0);let mi=-1,mv=0;G.forEach((g,i)=>{if(g[1]-g[0]>mv){mv=g[1]-g[0];mi=i}});
+  const tl=x=>x>=b?"24:00":hm(x);
+  document.getElementById("idleSum").textContent=G.length?G.length+"回・"+dur(tot):"なし";
+  const P=document.getElementById("idlePanel");
+  P.innerHTML=G.length?G.map((g,i)=>`<div class="ir${i===mi?" top":""}" style="--n:${i}"><span class="tm">${tl(g[0])} 〜 ${tl(g[1])}</span><span class="tag">${i===mi?"一番長い":""}</span><span class="du">${dur(g[1]-g[0])}</span></div>`).join(""):'<div class="none">この日は30分以上あいた時間がありません</div>';
+}
+document.getElementById("idleBtn").onclick=function(){const P=document.getElementById("idlePanel");const open=this.getAttribute("aria-expanded")!=="true";this.setAttribute("aria-expanded",String(open));P.hidden=!open;if(open){P.classList.remove("pop");void P.offsetWidth;P.classList.add("pop")}};
 function hourSheet(a,k){const ha=a+k*3600,hb=ha+3600;const rr=cut(DATA.recs,ha,hb).filter(r=>r.a!=="ロック画面");const used=rr.reduce((x,r)=>x+r.e-r.s,0);
   const host=document.getElementById("sheetHost");
   host.innerHTML=`<div class="sheet-bg" id="sbg"><div class="sheet glass" role="dialog" aria-modal="true" aria-label="${k}時台の詳細"><div class="grab"></div><h2>${k}時台</h2><div class="k">画面の使用 ${dur(used)}・${rr.length}回の切り替え</div>
