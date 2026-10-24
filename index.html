@@ -5,7 +5,7 @@
 <meta http-equiv="Cache-Control" content="no-cache">
 <script>
 /* ホーム画面アプリでも新しい版に自動で切り替える */
-(function(){var BUILD="1792805851";function check(){try{fetch("./index.html?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/var BUILD="(\d+)"/);if(m&&m[1]!==BUILD){location.replace("./?v="+m[1])}}).catch(function(){})}catch(e){}}
+(function(){var BUILD="1792806111";function check(){try{fetch("./index.html?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/var BUILD="(\d+)"/);if(m&&m[1]!==BUILD){location.replace("./?v="+m[1])}}).catch(function(){})}catch(e){}}
 window.addEventListener("load",check);document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")check()});})();
 </script>
 <title>スクぷーんタイム｜iPhoneのアプリ使用時間を分単位で確認（スクリーンタイムより細かく）</title>
@@ -186,7 +186,7 @@ header p{margin:0;color:var(--sub);font-size:13px;line-height:1.6}
     <ol>
       <li>iPhoneの<b>音量の上・下ボタンとサイドボタン</b>を同時に1秒ほど押して離す（軽く振動します）</li>
       <li><b>10分ほど待つ</b>（裏でファイルを作っています）</li>
-      <li>「設定」→「プライバシーとセキュリティ」→「解析と改善」→「解析データ」（<a class="sc-link" href="https://www.icloud.com/shortcuts/b3979a91d21a4a10b34c73b68de99721" target="_blank" rel="noopener">ショートカット「解析データを開く」</a>を入れておくと1タップで開けます）で <b>sysdiagnose_</b> で始まるファイルを開き、共有ボタンから「ファイルに保存」。名前が <b>IN_PROGRESS_</b> で始まるものはまだ作成中なので、消えるまで待ってください</li>
+      <li>「設定」→「プライバシーとセキュリティ」→「解析と改善」→「解析データ」（設定アプリの検索欄で<b>「解析」</b>と入れると「解析と改善」がすぐ出ます）で <b>sysdiagnose_</b> で始まるファイルを開き、共有ボタンから「ファイルに保存」。名前が <b>IN_PROGRESS_</b> で始まるものはまだ作成中なので、消えるまで待ってください</li>
       <li>このページの<b>「記録を選ぶ」</b>で、保存された <b>sysdiagnose_〜.tar.gz</b> を選ぶ</li>
     </ol>
     <div class="note">さかのぼれるのは直近1日半ほどです。読み込んだ記録はこのブラウザに残るので、こまめに読み込むと日をまたいで溜まっていきます。保存したものがファイルではなくフォルダになっていた場合は、<button class="link" type="button" id="pickDir">フォルダから選ぶ</button>こともできます（作成途中で保存すると、フォルダになることがあります）。</div>
