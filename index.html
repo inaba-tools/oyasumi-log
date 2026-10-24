@@ -5,7 +5,7 @@
 <meta http-equiv="Cache-Control" content="no-cache">
 <script>
 /* ホーム画面アプリでも新しい版に自動で切り替える */
-(function(){var BUILD="1792883461";function check(){try{fetch("./index.html?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/var BUILD="(\d+)"/);if(m&&m[1]!==BUILD){location.replace("./?v="+m[1])}}).catch(function(){})}catch(e){}}
+(function(){var BUILD="1792883677";function check(){try{fetch("./index.html?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/var BUILD="(\d+)"/);if(m&&m[1]!==BUILD){location.replace("./?v="+m[1])}}).catch(function(){})}catch(e){}}
 window.addEventListener("load",check);document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")check()});})();
 </script>
 <title>おやすみログ｜iPhoneで寝た時間・起きた時間がわかる睡眠記録（スクリーンタイムより細かく分単位）</title>
@@ -120,10 +120,6 @@ header p{margin:0;color:var(--sub);font-size:13px;line-height:1.6}
 .row .tm{font-variant-numeric:tabular-nums;color:var(--sub);font-size:13px}
 .row .nm{min-width:0}
 .row .nm small{display:block;color:var(--sub);font-size:12px;font-variant-numeric:tabular-nums}
-.paste-btn{font-size:16px!important;cursor:text;outline:none;caret-color:transparent;-webkit-user-select:text;user-select:text;white-space:nowrap;min-width:13em;resize:none;overflow:hidden;text-align:center;line-height:1.4;height:auto;-webkit-appearance:none;appearance:none;font-family:var(--font);font-weight:600}
-.paste-btn::placeholder{color:#fff;opacity:1}
-.paste-btn:focus::placeholder{color:rgba(255,255,255,.85)}
-.paste-btn:focus{box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 35%,transparent)}
 .idle-btn{margin-top:14px;width:100%;display:flex;align-items:center;gap:8px;border:1px solid var(--glass-edge);background:var(--track);color:var(--fg);font:600 14px var(--font);padding:11px 14px;border-radius:999px;cursor:pointer;text-align:left}
 .idle-btn span{flex:1;min-width:0}
 .idle-btn b{font-weight:600;color:var(--sub);font-variant-numeric:tabular-nums;font-size:13px}
@@ -164,7 +160,7 @@ header p{margin:0;color:var(--sub);font-size:13px;line-height:1.6}
     <h1>おやすみログ</h1>
     <p>iPhoneの診断ファイルから、寝た時間・起きた時間の目安と、何時何分にどのアプリを使っていたかを分刻みで表示します。ファイルはこの端末のブラウザの中だけで読み込み、どこにも送信しません。</p>
   </header>
-  <div class="banner glass" id="banner"><b>サンプル表示中</b><span>コピーした記録を下のボタンに「ペースト」すると切り替わります。</span></div>
+  <div class="banner glass" id="banner"><b>サンプル表示中</b><span>下の「記録を選ぶ」から自分の記録を選ぶと切り替わります。</span></div>
   <div class="glass pad prog" id="prog" hidden><div id="progText">読み込み中…</div><div class="track"><i id="progBar"></i></div></div>
   <div class="glass seg" id="days" role="group" aria-label="日付"></div>
   <section class="glass pad">
@@ -196,14 +192,14 @@ header p{margin:0;color:var(--sub);font-size:13px;line-height:1.6}
     <ol>
       <li>iPhoneの<b>音量の上・下ボタンとサイドボタン</b>を同時に1秒ほど押して離す（軽く振動します）</li>
       <li><b>10分ほど待つ</b>（裏でファイルを作っています）</li>
-      <li>「設定」→「プライバシーとセキュリティ」→「解析と改善」→「解析データ」（設定アプリの検索欄で<b>「解析」</b>と入れると「解析と改善」がすぐ出ます）で <b>sysdiagnose_</b> で始まるファイルを開き、共有ボタンから<b>「コピー」</b>。名前が <b>IN_PROGRESS_</b> で始まるものはまだ作成中なので、消えるまで待ってください</li>
-      <li>このページの下のボタンをタップして<b>「ペースト」</b></li>
+      <li>「設定」→「プライバシーとセキュリティ」→「解析と改善」→「解析データ」（設定アプリの検索欄で<b>「解析」</b>と入れると「解析と改善」がすぐ出ます）で <b>sysdiagnose_</b> で始まるファイルを開き、共有ボタンから「ファイルに保存」。名前が <b>IN_PROGRESS_</b> で始まるものはまだ作成中なので、消えるまで待ってください</li>
+      <li>このページの<b>「記録を選ぶ」</b>で、保存された <b>sysdiagnose_〜.tar.gz</b> を選ぶ</li>
     </ol>
-    <div class="note">さかのぼれるのは直近1日半ほどです。読み込んだ記録はこのブラウザに残るので、こまめに読み込むと日をまたいで溜まっていきます。ペーストがうまくいかない時は、共有ボタンの「ファイルに保存」で保存してから<button class="link" type="button" id="pick">ファイルから選ぶ</button>こともできます。保存したものがファイルではなくフォルダになっていた場合は、<button class="link" type="button" id="pickDir">フォルダから選ぶ</button>こともできます（作成途中で保存すると、フォルダになることがあります）。</div>
+    <div class="note">さかのぼれるのは直近1日半ほどです。読み込んだ記録はこのブラウザに残るので、こまめに読み込むと日をまたいで溜まっていきます。保存したものがファイルではなくフォルダになっていた場合は、<button class="link" type="button" id="pickDir">フォルダから選ぶ</button>こともできます（作成途中で保存すると、フォルダになることがあります）。</div>
     <div class="note confirm" id="clearBox"></div>
   </section>
 </div>
-<div class="dock"><div class="glass"><textarea class="btn paste-btn" id="pasteBox" rows="1" aria-label="コピーした記録をここに貼り付け" placeholder="タップして「ペースト」" spellcheck="false" autocorrect="off" autocapitalize="off"></textarea></div></div>
+<div class="dock"><div class="glass"><button class="btn" id="pick" type="button">記録を選ぶ</button></div></div>
 <input type="file" id="file" hidden>
 <input type="file" id="dir" webkitdirectory multiple hidden>
 <div id="sheetHost"></div>
@@ -416,17 +412,6 @@ document.getElementById("pickDir").onclick=()=>dirIn.click();
 function choose(list){const a=[...list];if(!a.length)return null;const pl=a.filter(f=>/\.PLSQL$/i.test(f.name)).sort((x,y)=>(/^powerlog_/i.test(y.name)-/^powerlog_/i.test(x.name))||y.size-x.size);return pl[0]||(a.length===1?a[0]:null)}
 fileIn.onchange=()=>{const f=choose(fileIn.files);fileIn.value="";run(f)};
 dirIn.onchange=()=>{const n=dirIn.files.length;const f=choose(dirIn.files);dirIn.value="";if(n&&!f){const P=document.getElementById("prog"),T=document.getElementById("progText");P.hidden=false;T.className="err";T.textContent="選んだフォルダの中に画面の記録（powerlog_〜.PLSQL）が見つかりませんでした。sysdiagnose_ で始まるフォルダを選んでください。";return}run(f)};
-/* 貼り付け：共有シートの「コピー」でクリップボードに入れたファイルを受け取る */
-(function(){const box=document.getElementById("pasteBox");box.addEventListener("focus",()=>{box.placeholder="もう一度タップ →「ペースト」"});box.addEventListener("blur",()=>{box.placeholder="タップして「ペースト」"});
-  box.addEventListener("paste",e=>{e.preventDefault();const cd=e.clipboardData;const fs=[];
-    if(cd){for(const f of cd.files||[])fs.push(f);if(!fs.length)for(const it of cd.items||[]){if(it.kind==="file"){const f=it.getAsFile();if(f)fs.push(f)}}}
-    box.value="";box.blur();
-    if(fs.length){run(choose(fs)||fs[0]);return}
-    const P=document.getElementById("prog"),T=document.getElementById("progText");P.hidden=false;T.className="err";
-    const types=cd?[...cd.types].join(", "):"なし";
-    T.textContent="貼り付けではファイルを受け取れませんでした（受け取った中身："+(types||"なし")+"）。お手数ですが、下の使い方の「ファイルから選ぶ」を使ってください。"});
-  box.addEventListener("input",()=>{box.value=""});
-})();
 async function run(f){if(!f)return;
   const P=document.getElementById("prog"),T=document.getElementById("progText"),B=document.getElementById("progBar");P.hidden=false;T.className="";T.textContent="ファイルを展開しています…";B.style.width="0";
   try{const u8=await extract(f,r=>{B.style.width=(r*100).toFixed(1)+"%";T.textContent="ファイルを展開しています… "+Math.round(r*100)+"%"});
