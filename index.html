@@ -5,7 +5,7 @@
 <meta http-equiv="Cache-Control" content="no-cache">
 <script>
 /* ホーム画面アプリでも新しい版に自動で切り替える */
-(function(){var BUILD="1792882509";function check(){try{fetch("./index.html?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/var BUILD="(\d+)"/);if(m&&m[1]!==BUILD){location.replace("./?v="+m[1])}}).catch(function(){})}catch(e){}}
+(function(){var BUILD="1792882889";function check(){try{fetch("./index.html?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/var BUILD="(\d+)"/);if(m&&m[1]!==BUILD){location.replace("./?v="+m[1])}}).catch(function(){})}catch(e){}}
 window.addEventListener("load",check);document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")check()});})();
 </script>
 <title>おやすみログ｜iPhoneで寝た時間・起きた時間がわかる睡眠記録（スクリーンタイムより細かく分単位）</title>
@@ -120,6 +120,9 @@ header p{margin:0;color:var(--sub);font-size:13px;line-height:1.6}
 .row .tm{font-variant-numeric:tabular-nums;color:var(--sub);font-size:13px}
 .row .nm{min-width:0}
 .row .nm small{display:block;color:var(--sub);font-size:12px;font-variant-numeric:tabular-nums}
+.paste{display:flex;flex-direction:column;gap:2px;align-items:center;padding:16px;border-radius:22px;border-style:dashed!important;border-width:2px!important;text-align:center;cursor:text;outline:none;-webkit-user-select:text;user-select:text;caret-color:transparent}
+.paste b{font-size:15px}.paste span{font-size:12px;color:var(--sub)}
+.paste:focus{border-color:var(--accent)!important}
 .idle-btn{margin-top:14px;width:100%;display:flex;align-items:center;gap:8px;border:1px solid var(--glass-edge);background:var(--track);color:var(--fg);font:600 14px var(--font);padding:11px 14px;border-radius:999px;cursor:pointer;text-align:left}
 .idle-btn span{flex:1;min-width:0}
 .idle-btn b{font-weight:600;color:var(--sub);font-variant-numeric:tabular-nums;font-size:13px}
@@ -161,6 +164,7 @@ header p{margin:0;color:var(--sub);font-size:13px;line-height:1.6}
     <p>iPhoneの診断ファイルから、寝た時間・起きた時間の目安と、何時何分にどのアプリを使っていたかを分刻みで表示します。ファイルはこの端末のブラウザの中だけで読み込み、どこにも送信しません。</p>
   </header>
   <div class="banner glass" id="banner"><b>サンプル表示中</b><span>下の「記録を選ぶ」から自分の記録を選ぶと切り替わります。</span></div>
+  <div class="glass paste" id="pasteBox" contenteditable="true" role="textbox" aria-label="コピーした記録の貼り付け欄" inputmode="none" spellcheck="false"><b>コピーした記録を貼り付け</b><span>ここを長押しして「ペースト」</span></div>
   <div class="glass pad prog" id="prog" hidden><div id="progText">読み込み中…</div><div class="track"><i id="progBar"></i></div></div>
   <div class="glass seg" id="days" role="group" aria-label="日付"></div>
   <section class="glass pad">
@@ -412,6 +416,18 @@ document.getElementById("pickDir").onclick=()=>dirIn.click();
 function choose(list){const a=[...list];if(!a.length)return null;const pl=a.filter(f=>/\.PLSQL$/i.test(f.name)).sort((x,y)=>(/^powerlog_/i.test(y.name)-/^powerlog_/i.test(x.name))||y.size-x.size);return pl[0]||(a.length===1?a[0]:null)}
 fileIn.onchange=()=>{const f=choose(fileIn.files);fileIn.value="";run(f)};
 dirIn.onchange=()=>{const n=dirIn.files.length;const f=choose(dirIn.files);dirIn.value="";if(n&&!f){const P=document.getElementById("prog"),T=document.getElementById("progText");P.hidden=false;T.className="err";T.textContent="選んだフォルダの中に画面の記録（powerlog_〜.PLSQL）が見つかりませんでした。sysdiagnose_ で始まるフォルダを選んでください。";return}run(f)};
+/* 貼り付け：共有シートの「コピー」でクリップボードに入れたファイルを受け取る */
+(function(){const box=document.getElementById("pasteBox");const keep=box.innerHTML;
+  box.addEventListener("beforeinput",e=>{if(e.inputType!=="insertFromPaste")e.preventDefault()});
+  box.addEventListener("paste",e=>{e.preventDefault();const cd=e.clipboardData;const fs=[];
+    if(cd){for(const f of cd.files||[])fs.push(f);if(!fs.length)for(const it of cd.items||[]){if(it.kind==="file"){const f=it.getAsFile();if(f)fs.push(f)}}}
+    box.innerHTML=keep;box.blur();
+    if(fs.length){run(choose(fs)||fs[0]);return}
+    const P=document.getElementById("prog"),T=document.getElementById("progText");P.hidden=false;T.className="err";
+    const types=cd?[...cd.types].join(", "):"なし";
+    T.textContent="貼り付けではファイルを受け取れませんでした（受け取った中身："+(types||"なし")+"）。お手数ですが「記録を選ぶ」から選んでください。"});
+  box.addEventListener("input",()=>{if(box.innerHTML!==keep)box.innerHTML=keep});
+})();
 async function run(f){if(!f)return;
   const P=document.getElementById("prog"),T=document.getElementById("progText"),B=document.getElementById("progBar");P.hidden=false;T.className="";T.textContent="ファイルを展開しています…";B.style.width="0";
   try{const u8=await extract(f,r=>{B.style.width=(r*100).toFixed(1)+"%";T.textContent="ファイルを展開しています… "+Math.round(r*100)+"%"});
