@@ -5,7 +5,7 @@
 <meta http-equiv="Cache-Control" content="no-cache">
 <script>
 /* ホーム画面アプリでも新しい版に自動で切り替える */
-(function(){var BUILD="1792762958";function check(){try{fetch("./index.html?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/var BUILD="(\d+)"/);if(m&&m[1]!==BUILD){location.replace("./?v="+m[1])}}).catch(function(){})}catch(e){}}
+(function(){var BUILD="1792803532";function check(){try{fetch("./index.html?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/var BUILD="(\d+)"/);if(m&&m[1]!==BUILD){location.replace("./?v="+m[1])}}).catch(function(){})}catch(e){}}
 window.addEventListener("load",check);document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")check()});})();
 </script>
 <title>スクぷーんタイム｜iPhoneのアプリ使用時間を分単位で確認（スクリーンタイムより細かく）</title>
@@ -152,7 +152,7 @@ header p{margin:0;color:var(--sub);font-size:13px;line-height:1.6}
     <h1>スクぷーんタイム</h1>
     <p>iPhoneの診断ファイルから、何時何分にどのアプリを使っていたかを分刻みで表示します。ファイルはこの端末のブラウザの中だけで読み込み、どこにも送信しません。</p>
   </header>
-  <div class="banner glass" id="banner"><b>サンプル表示中</b><span>下の「フォルダを選ぶ」から自分の記録を選ぶと切り替わります。</span></div>
+  <div class="banner glass" id="banner"><b>サンプル表示中</b><span>下の「記録を選ぶ」から自分の記録を選ぶと切り替わります。</span></div>
   <div class="glass pad prog" id="prog" hidden><div id="progText">読み込み中…</div><div class="track"><i id="progBar"></i></div></div>
   <div class="glass seg" id="days" role="group" aria-label="日付"></div>
   <section class="glass pad">
@@ -185,13 +185,13 @@ header p{margin:0;color:var(--sub);font-size:13px;line-height:1.6}
       <li>iPhoneの<b>音量の上・下ボタンとサイドボタン</b>を同時に1秒ほど押して離す（軽く振動します）</li>
       <li><b>10分ほど待つ</b>（裏でファイルを作っています）</li>
       <li>「設定」→「プライバシーとセキュリティ」→「解析と改善」→「解析データ」で <b>sysdiagnose_</b> で始まるファイルを開き、共有ボタンから「ファイルに保存」。名前が <b>IN_PROGRESS_</b> で始まるものはまだ作成中なので、消えるまで待ってください</li>
-      <li>このページの<b>「フォルダを選ぶ」</b>で、保存された <b>sysdiagnose_</b> のフォルダを選ぶ</li>
+      <li>このページの<b>「記録を選ぶ」</b>で、保存された <b>sysdiagnose_〜.tar.gz</b> を選ぶ</li>
     </ol>
-    <div class="note">さかのぼれるのは直近1日半ほどです。読み込んだ記録はこのブラウザに残るので、こまめに読み込むと日をまたいで溜まっていきます。フォルダが選べない場合は、フォルダを長押しして「圧縮」したzipを<button class="link" type="button" id="pick">ファイルから選ぶ</button>こともできます。</div>
+    <div class="note">さかのぼれるのは直近1日半ほどです。読み込んだ記録はこのブラウザに残るので、こまめに読み込むと日をまたいで溜まっていきます。保存したものがファイルではなくフォルダになっていた場合は、<button class="link" type="button" id="pickDir">フォルダから選ぶ</button>こともできます（作成途中で保存すると、フォルダになることがあります）。</div>
     <div class="note confirm" id="clearBox"></div>
   </section>
 </div>
-<div class="dock"><div class="glass"><button class="btn" id="pickDir" type="button">フォルダを選ぶ</button></div></div>
+<div class="dock"><div class="glass"><button class="btn" id="pick" type="button">記録を選ぶ</button></div></div>
 <input type="file" id="file" hidden>
 <input type="file" id="dir" webkitdirectory multiple hidden>
 <div id="sheetHost"></div>
