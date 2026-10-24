@@ -5,7 +5,7 @@
 <meta http-equiv="Cache-Control" content="no-cache">
 <script>
 /* ホーム画面アプリでも新しい版に自動で切り替える */
-(function(){var BUILD="1792881975";function check(){try{fetch("./index.html?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/var BUILD="(\d+)"/);if(m&&m[1]!==BUILD){location.replace("./?v="+m[1])}}).catch(function(){})}catch(e){}}
+(function(){var BUILD="1792882441";function check(){try{fetch("./index.html?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/var BUILD="(\d+)"/);if(m&&m[1]!==BUILD){location.replace("./?v="+m[1])}}).catch(function(){})}catch(e){}}
 window.addEventListener("load",check);document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")check()});})();
 </script>
 <title>おやすみログ｜iPhoneで寝た時間・起きた時間がわかる睡眠記録（スクリーンタイムより細かく分単位）</title>
@@ -69,11 +69,13 @@ header p{margin:0;color:var(--sub);font-size:13px;line-height:1.6}
 .v small{font-size:14px;font-weight:600;margin-left:1px}
 .sec-t{font-size:13px;font-weight:600;color:var(--sub);margin:0 0 10px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .sec-t span{font-weight:400;font-size:12px}
-.ruler{display:grid;grid-template-columns:40px 1fr 44px;gap:8px;font-size:10px;color:var(--faint);font-variant-numeric:tabular-nums;margin-bottom:4px;position:sticky;top:env(safe-area-inset-top,0px);z-index:2}
+.ruler{display:grid;grid-template-columns:76px 1fr 44px;gap:8px;font-size:10px;color:var(--faint);font-variant-numeric:tabular-nums;margin-bottom:4px;position:sticky;top:env(safe-area-inset-top,0px);z-index:2}
 .ruler .sc{position:relative;height:14px}
 .ruler .sc span{position:absolute;transform:translateX(-50%)}
-.hour{display:grid;grid-template-columns:40px 1fr 44px;gap:8px;align-items:center;padding:3px 0;cursor:pointer;border-radius:8px;background:none;border:0;width:100%;color:inherit;font:inherit;text-align:left}
-.hour .h{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+.hour{display:grid;grid-template-columns:76px 1fr 44px;gap:8px;align-items:center;padding:3px 0;cursor:pointer;border-radius:8px;background:none;border:0;width:100%;color:inherit;font:inherit;text-align:left}
+.hour .h{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.hour .h small{font-size:11px;font-weight:500;color:var(--sub);margin-right:4px}
+.hour.empty .h small{color:var(--faint)}
 .hour .t{font-size:11px;color:var(--sub);text-align:right;font-variant-numeric:tabular-nums}
 .bar{position:relative;height:22px;border-radius:7px;background:var(--track);overflow:hidden}
 .bar .g{position:absolute;top:0;bottom:0;width:1px;background:var(--tick)}
@@ -331,6 +333,7 @@ const hms=t=>{const d=new Date(t*1000);return p2(d.getHours())+":"+p2(d.getMinut
 function dur(s,html){s=Math.round(s);const u=x=>html?`<small>${x}</small>`:x;if(s<60)return s+u("秒");const m=Math.floor(s/60),ss=s%60;if(m<60)return m+u("分")+(m<10&&ss&&!html?ss+"秒":"");return Math.floor(m/60)+u("時間")+(m%60?m%60+u("分"):"")}
 const dayStart=t=>{const d=new Date((t-43200)*1000);d.setHours(12,0,0,0);return d.getTime()/1000};
 const HR=k=>(k+12)%24;
+const md=t=>{const d=new Date(t*1000);return (d.getMonth()+1)+"/"+d.getDate()};
 const cut=(arr,a,b)=>arr.filter(r=>r.e>a&&r.s<b).map(r=>({...r,s:Math.max(r.s,a),e:Math.min(r.e,b)}));
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
@@ -355,7 +358,7 @@ function show(i){CUR=i;const a=DAYS[i],b=a+86400;
   {const used=new Set(R.map(r=>new Date(r.s*1000).getHours()));document.getElementById("tlSum").textContent=R.length?used.size+"時間帯で使用":"記録なし"}
   
   let h="";for(let k=0;k<24;k++){const ha=a+k*3600,hb=ha+3600;const rr=cut(R,ha,hb);const used=rr.reduce((x,r)=>x+r.e-r.s,0);
-    h+=`<button type="button" class="hour${used?"":" empty"}" style="--n:${k}" data-h="${k}" aria-label="${HR(k)}時台 ${used?dur(used):"使用なし"}"><span class="h">${HR(k)}時</span><div class="bar">${used?'<i class="g" style="left:25%"></i><i class="g" style="left:50%"></i><i class="g" style="left:75%"></i>':""}${rr.map(r=>`<i class="b" style="left:${(r.s-ha)/36}%;width:${(r.e-r.s)/36}%;background:${color(r.a)}"></i>`).join("")}</div><span class="t">${used?dur(used):""}</span></button>`}
+    h+=`<button type="button" class="hour${used?"":" empty"}" style="--n:${k}" data-h="${k}" aria-label="${md(ha)} ${HR(k)}時台 ${used?dur(used):"使用なし"}"><span class="h"><small>${md(ha)}</small>${HR(k)}時</span><div class="bar">${used?'<i class="g" style="left:25%"></i><i class="g" style="left:50%"></i><i class="g" style="left:75%"></i>':""}${rr.map(r=>`<i class="b" style="left:${(r.s-ha)/36}%;width:${(r.e-r.s)/36}%;background:${color(r.a)}"></i>`).join("")}</div><span class="t">${used?dur(used):""}</span></button>`}
   const H=document.getElementById("hours");H.innerHTML=h;H.onclick=e=>{const b=e.target.closest(".hour");if(b&&!b.classList.contains("empty"))hourSheet(a,+b.dataset.h)};
   const per={};R.forEach(r=>per[r.a]=(per[r.a]||0)+r.e-r.s);const L=Object.entries(per).sort((x,y)=>y[1]-x[1]);const apps=L.filter(x=>!SYS.has(x[0]));const mx=apps.length?apps[0][1]:1;
   document.getElementById("legend").innerHTML=apps.slice(0,8).map(([n])=>`<span style="--c:${color(n)}"><i></i>${esc(n)}</span>`).join("")+(L.some(x=>SYS.has(x[0]))?`<span style="--c:var(--faint)"><i></i>ホーム画面など</span>`:"");
@@ -378,7 +381,7 @@ document.getElementById("idleBtn").onclick=function(){const P=document.getElemen
 document.querySelectorAll("[data-fold]").forEach(btn=>btn.addEventListener("click",()=>{const P=document.getElementById(btn.dataset.fold);const open=btn.getAttribute("aria-expanded")!=="true";btn.setAttribute("aria-expanded",String(open));P.hidden=!open;if(open){P.classList.remove("pop");void P.offsetWidth;P.classList.add("pop")}}));
 function hourSheet(a,k){const ha=a+k*3600,hb=ha+3600;const rr=cut(DATA.recs,ha,hb).filter(r=>r.a!=="ロック画面");const used=rr.reduce((x,r)=>x+r.e-r.s,0);
   const host=document.getElementById("sheetHost");
-  host.innerHTML=`<div class="sheet-bg" id="sbg"><div class="sheet glass" role="dialog" aria-modal="true" aria-label="${HR(k)}時台の詳細"><div class="sheet-top" id="sTop" role="button" tabindex="0" aria-label="閉じる（タップか下にスライド）"><div class="grab"></div><h2>${HR(k)}時台</h2><div class="k">画面の使用 ${dur(used)}・${rr.length}回の切り替え</div></div>
+  host.innerHTML=`<div class="sheet-bg" id="sbg"><div class="sheet glass" role="dialog" aria-modal="true" aria-label="${HR(k)}時台の詳細"><div class="sheet-top" id="sTop" role="button" tabindex="0" aria-label="閉じる（タップか下にスライド）"><div class="grab"></div><h2>${md(ha)} ${HR(k)}時台</h2><div class="k">画面の使用 ${dur(used)}・${rr.length}回の切り替え</div></div>
   <div class="bar bigbar"><i class="g" style="left:25%"></i><i class="g" style="left:50%"></i><i class="g" style="left:75%"></i>${rr.map(r=>`<i class="b" style="left:${(r.s-ha)/36}%;width:${(r.e-r.s)/36}%;background:${color(r.a)}"></i>`).join("")}</div>
   <div class="ruler" style="position:static;grid-template-columns:1fr;margin-bottom:10px"><div class="sc"><span style="left:0;transform:none">${HR(k)}:00</span><span style="left:25%">:15</span><span style="left:50%">:30</span><span style="left:75%">:45</span><span style="left:100%;transform:translateX(-100%)">${HR(k+1)}:00</span></div></div>
   ${rr.filter(r=>!(SYS.has(r.a)&&r.e-r.s<5)).map(r=>`<div class="row" style="--c:${color(r.a)}"><i class="dot"></i><span class="nm">${esc(r.a)}<small>${hms(r.s)} 〜 ${hms(r.e)}</small></span><span class="tm">${dur(r.e-r.s)}</span></div>`).join("")}
