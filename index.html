@@ -5,7 +5,7 @@
 <meta http-equiv="Cache-Control" content="no-cache">
 <script>
 /* ホーム画面アプリでも新しい版に自動で切り替える */
-(function(){var BUILD="1792883079";function check(){try{fetch("./index.html?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/var BUILD="(\d+)"/);if(m&&m[1]!==BUILD){location.replace("./?v="+m[1])}}).catch(function(){})}catch(e){}}
+(function(){var BUILD="1792883461";function check(){try{fetch("./index.html?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/var BUILD="(\d+)"/);if(m&&m[1]!==BUILD){location.replace("./?v="+m[1])}}).catch(function(){})}catch(e){}}
 window.addEventListener("load",check);document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")check()});})();
 </script>
 <title>おやすみログ｜iPhoneで寝た時間・起きた時間がわかる睡眠記録（スクリーンタイムより細かく分単位）</title>
@@ -120,7 +120,9 @@ header p{margin:0;color:var(--sub);font-size:13px;line-height:1.6}
 .row .tm{font-variant-numeric:tabular-nums;color:var(--sub);font-size:13px}
 .row .nm{min-width:0}
 .row .nm small{display:block;color:var(--sub);font-size:12px;font-variant-numeric:tabular-nums}
-.paste-btn{font-size:16px!important;cursor:text;outline:none;caret-color:transparent;-webkit-user-select:text;user-select:text;white-space:nowrap;justify-content:center;min-width:12em}
+.paste-btn{font-size:16px!important;cursor:text;outline:none;caret-color:transparent;-webkit-user-select:text;user-select:text;white-space:nowrap;min-width:13em;resize:none;overflow:hidden;text-align:center;line-height:1.4;height:auto;-webkit-appearance:none;appearance:none;font-family:var(--font);font-weight:600}
+.paste-btn::placeholder{color:#fff;opacity:1}
+.paste-btn:focus::placeholder{color:rgba(255,255,255,.85)}
 .paste-btn:focus{box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 35%,transparent)}
 .idle-btn{margin-top:14px;width:100%;display:flex;align-items:center;gap:8px;border:1px solid var(--glass-edge);background:var(--track);color:var(--fg);font:600 14px var(--font);padding:11px 14px;border-radius:999px;cursor:pointer;text-align:left}
 .idle-btn span{flex:1;min-width:0}
@@ -201,7 +203,7 @@ header p{margin:0;color:var(--sub);font-size:13px;line-height:1.6}
     <div class="note confirm" id="clearBox"></div>
   </section>
 </div>
-<div class="dock"><div class="glass"><div class="btn paste-btn" id="pasteBox" contenteditable="true" role="textbox" aria-label="コピーした記録をここに貼り付け" inputmode="none" spellcheck="false" autocorrect="off" autocapitalize="off">タップして「ペースト」</div></div></div>
+<div class="dock"><div class="glass"><textarea class="btn paste-btn" id="pasteBox" rows="1" aria-label="コピーした記録をここに貼り付け" placeholder="タップして「ペースト」" spellcheck="false" autocorrect="off" autocapitalize="off"></textarea></div></div>
 <input type="file" id="file" hidden>
 <input type="file" id="dir" webkitdirectory multiple hidden>
 <div id="sheetHost"></div>
@@ -415,16 +417,15 @@ function choose(list){const a=[...list];if(!a.length)return null;const pl=a.filt
 fileIn.onchange=()=>{const f=choose(fileIn.files);fileIn.value="";run(f)};
 dirIn.onchange=()=>{const n=dirIn.files.length;const f=choose(dirIn.files);dirIn.value="";if(n&&!f){const P=document.getElementById("prog"),T=document.getElementById("progText");P.hidden=false;T.className="err";T.textContent="選んだフォルダの中に画面の記録（powerlog_〜.PLSQL）が見つかりませんでした。sysdiagnose_ で始まるフォルダを選んでください。";return}run(f)};
 /* 貼り付け：共有シートの「コピー」でクリップボードに入れたファイルを受け取る */
-(function(){const box=document.getElementById("pasteBox");const keep=box.innerHTML;box.addEventListener("focus",()=>{const r=document.createRange();r.selectNodeContents(box);r.collapse(false);const sel=getSelection();sel.removeAllRanges();sel.addRange(r)});
-  box.addEventListener("beforeinput",e=>{if(e.inputType!=="insertFromPaste")e.preventDefault()});
+(function(){const box=document.getElementById("pasteBox");box.addEventListener("focus",()=>{box.placeholder="もう一度タップ →「ペースト」"});box.addEventListener("blur",()=>{box.placeholder="タップして「ペースト」"});
   box.addEventListener("paste",e=>{e.preventDefault();const cd=e.clipboardData;const fs=[];
     if(cd){for(const f of cd.files||[])fs.push(f);if(!fs.length)for(const it of cd.items||[]){if(it.kind==="file"){const f=it.getAsFile();if(f)fs.push(f)}}}
-    box.innerHTML=keep;box.blur();
+    box.value="";box.blur();
     if(fs.length){run(choose(fs)||fs[0]);return}
     const P=document.getElementById("prog"),T=document.getElementById("progText");P.hidden=false;T.className="err";
     const types=cd?[...cd.types].join(", "):"なし";
     T.textContent="貼り付けではファイルを受け取れませんでした（受け取った中身："+(types||"なし")+"）。お手数ですが、下の使い方の「ファイルから選ぶ」を使ってください。"});
-  box.addEventListener("input",()=>{if(box.innerHTML!==keep)box.innerHTML=keep});
+  box.addEventListener("input",()=>{box.value=""});
 })();
 async function run(f){if(!f)return;
   const P=document.getElementById("prog"),T=document.getElementById("progText"),B=document.getElementById("progBar");P.hidden=false;T.className="";T.textContent="ファイルを展開しています…";B.style.width="0";
