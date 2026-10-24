@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://pipopa-lab.github.io/screenlog/sitemap.xml
+Sitemap: https://pipopa-lab.github.io/oyasumi-log/sitemap.xml
