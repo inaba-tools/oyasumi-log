@@ -5,7 +5,7 @@
 <meta http-equiv="Cache-Control" content="no-cache">
 <script>
 /* ホーム画面アプリでも新しい版に自動で切り替える */
-(function(){var BUILD="1792882441";function check(){try{fetch("./index.html?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/var BUILD="(\d+)"/);if(m&&m[1]!==BUILD){location.replace("./?v="+m[1])}}).catch(function(){})}catch(e){}}
+(function(){var BUILD="1792882509";function check(){try{fetch("./index.html?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){var m=t.match(/var BUILD="(\d+)"/);if(m&&m[1]!==BUILD){location.replace("./?v="+m[1])}}).catch(function(){})}catch(e){}}
 window.addEventListener("load",check);document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")check()});})();
 </script>
 <title>おやすみログ｜iPhoneで寝た時間・起きた時間がわかる睡眠記録（スクリーンタイムより細かく分単位）</title>
@@ -358,7 +358,7 @@ function show(i){CUR=i;const a=DAYS[i],b=a+86400;
   {const used=new Set(R.map(r=>new Date(r.s*1000).getHours()));document.getElementById("tlSum").textContent=R.length?used.size+"時間帯で使用":"記録なし"}
   
   let h="";for(let k=0;k<24;k++){const ha=a+k*3600,hb=ha+3600;const rr=cut(R,ha,hb);const used=rr.reduce((x,r)=>x+r.e-r.s,0);
-    h+=`<button type="button" class="hour${used?"":" empty"}" style="--n:${k}" data-h="${k}" aria-label="${md(ha)} ${HR(k)}時台 ${used?dur(used):"使用なし"}"><span class="h"><small>${md(ha)}</small>${HR(k)}時</span><div class="bar">${used?'<i class="g" style="left:25%"></i><i class="g" style="left:50%"></i><i class="g" style="left:75%"></i>':""}${rr.map(r=>`<i class="b" style="left:${(r.s-ha)/36}%;width:${(r.e-r.s)/36}%;background:${color(r.a)}"></i>`).join("")}</div><span class="t">${used?dur(used):""}</span></button>`}
+    h+=`<button type="button" class="hour${used?"":" empty"}" style="--n:${k}" data-h="${k}" aria-label="${md(ha)} ${HR(k)}時台 ${used?dur(used):"使用なし"}"><span class="h"><small${HR(k)%12?' style="visibility:hidden"':''}>${md(ha)}</small>${HR(k)}時</span><div class="bar">${used?'<i class="g" style="left:25%"></i><i class="g" style="left:50%"></i><i class="g" style="left:75%"></i>':""}${rr.map(r=>`<i class="b" style="left:${(r.s-ha)/36}%;width:${(r.e-r.s)/36}%;background:${color(r.a)}"></i>`).join("")}</div><span class="t">${used?dur(used):""}</span></button>`}
   const H=document.getElementById("hours");H.innerHTML=h;H.onclick=e=>{const b=e.target.closest(".hour");if(b&&!b.classList.contains("empty"))hourSheet(a,+b.dataset.h)};
   const per={};R.forEach(r=>per[r.a]=(per[r.a]||0)+r.e-r.s);const L=Object.entries(per).sort((x,y)=>y[1]-x[1]);const apps=L.filter(x=>!SYS.has(x[0]));const mx=apps.length?apps[0][1]:1;
   document.getElementById("legend").innerHTML=apps.slice(0,8).map(([n])=>`<span style="--c:${color(n)}"><i></i>${esc(n)}</span>`).join("")+(L.some(x=>SYS.has(x[0]))?`<span style="--c:var(--faint)"><i></i>ホーム画面など</span>`:"");
